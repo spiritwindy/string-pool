@@ -35,10 +35,8 @@ export class StrPool {
             this.ref.push(s)
             return s
         } else {
-            if (end == undefined) {
-                let link = StrPool.calu(this, start, end)
-                return new StrPool({ link })
-            }
+            let link = StrPool.calu(this, start, end)
+            return new StrPool({ link })
         }
     }
     toString() {
@@ -54,6 +52,17 @@ export class StrPool {
             }
             return str
         }
+    }
+    del() {
+        StrPool.wpool.delete(this);
+        this.ref.forEach((ref) => {
+            // ref.del()
+            ref.link?.forEach((v,index)=>{
+                if (v.pool == this) {
+                    ref.link![index] = Ref.toNewRef(v)!
+                }
+            })
+        })
     }
     static calu(strPool: StrPool, start: number, end: number) {
         if (strPool.base) {
