@@ -31,6 +31,9 @@ export class StrPool {
     }
     slice(start: number, end: number) {
         if (this.base) {
+            if (start < 0 || end > (this.length ?? 0) || start >= end) {
+                throw new Error("Invalid start or end indices for slicing.");
+            }
             let s = new StrPool({ strPool: this, start, end, type: 2 })
             this.ref.push(s)
             return s
