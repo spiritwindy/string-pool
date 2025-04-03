@@ -12,7 +12,7 @@ export class StrPool {
         str?: string, type?: number, strPool?: StrPool, start?: number, end?: number,
         link?: Ref[]
     }) {
-        if (type == 1) {
+        if (type == 1 && link == null) {
             this.str = str;
             this.base = true;
             this.length = str?.length
@@ -23,7 +23,7 @@ export class StrPool {
             this.link!.push(...StrPool.calu(strPool, start, end))
             this.length = end - start
         }
-        else if (link && type == 3) {
+        else if (link) {
             this.base = false
             this.link = link;
             this.length = this.sumLen();
@@ -39,7 +39,7 @@ export class StrPool {
             return s
         } else {
             let link = StrPool.calu(this, start, end)
-            return new StrPool({ link })
+            return new StrPool({ link, type: 3 })  
         }
     }
     toString() {
@@ -59,7 +59,6 @@ export class StrPool {
     del() {
         StrPool.wpool.delete(this);
         this.ref.forEach((ref) => {
-            // ref.del()
             ref.link?.forEach((v,index)=>{
                 if (v.pool == this) {
                     ref.link![index] = Ref.toNewRef(v)!
@@ -75,16 +74,15 @@ export class StrPool {
             let refs: Ref[] = []
             for (let i = 0; i < link.length; i++) {
                 let ref = link[i]
-                let arr = [ref.start + start, ref.start + end]
-                if (arr[1] <= ref.end) {
+                let arr = [ref.start + start, Math.min(ref.end, ref.start + end)]
+                if (arr[0] < arr[1]) {
                     refs.push(new Ref(ref.pool, arr[0], arr[1]))
+                    end -= start + arr[1] - arr[0]
                 } else {
-                    end = ref.end;
-                    refs.push(new Ref(ref.pool, start, end))
-                    end -= ref.end - ref.start
-                    start = 0
-                    if (end <= 0) break
+                    end -=start
                 }
+                if (end <= 0) break
+                start = 0
             }
             return refs
         }
