@@ -5,7 +5,7 @@ export class StrPool {
     base = true
     ref: StrPool[] = [];//引用的
 
-    link = <Ref[]|null>[]
+    link = <Ref[] | null>[]
     str: string | undefined;
     length: number | undefined;
     constructor({ str, type = 1, strPool, start, end, link }: {
@@ -18,7 +18,7 @@ export class StrPool {
             this.length = str?.length
             this.link = null;
             StrPool.wpool.set(this, this.str)
-        } else if (type == 2&& start != undefined && end != undefined && strPool != undefined) {
+        } else if (type == 2 && start != undefined && end != undefined && strPool != undefined) {
             this.base = false
             this.link!.push(...StrPool.calu(strPool, start, end))
             this.length = end - start
@@ -54,7 +54,7 @@ export class StrPool {
             for (let i = 0; i < this.link!.length; i++) {
                 let ref = this.link![i]
                 if (ref.pool) {
-                    str += ref.pool.str?.slice(ref.start, ref.end)??""
+                    str += ref.pool.str?.slice(ref.start, ref.end) ?? ""
                 }
             }
             return str
@@ -63,7 +63,7 @@ export class StrPool {
     del() {
         StrPool.wpool.delete(this);
         this.ref.forEach((ref) => {
-            ref.link?.forEach((v,index)=>{
+            ref.link?.forEach((v, index) => {
                 if (v.pool == this) {
                     ref.link![index] = Ref.toNewRef(v)!
                 }
@@ -83,7 +83,7 @@ export class StrPool {
                     refs.push(new Ref(ref.pool, arr[0], arr[1]))
                     end -= start + arr[1] - arr[0]
                     start = 0
-                } else { 
+                } else {
                     start -= ref.end - ref.start
                     end -= ref.end - ref.start
                 }
@@ -99,14 +99,28 @@ export class StrPool {
             const pool = pools[index];
             if (pool.base) {
                 link.push(new Ref(pool, 0, pool.length!))
-            } else if(pool.link?.length){
+            } else if (pool.link?.length) {
                 link.push(...pool.link)
+
             }
         }
-        return new StrPool({ link,type: 3 })
+        let d = new StrPool({ link, type: 3 })
+        for (let index = 0; index < pools.length; index++) {
+            const pool = pools[index]; 
+            if (pool.base) {
+                pool.ref.push(d)
+            } else {
+                for (let p of pool.link!) {
+                    if (p.pool.base) {
+                        p.pool.ref.push(d)
+                    }
+                }
+            }
+        }
+        return d;
     }
     sumLen() {
-        if(this.link == null) return this.str?.length
+        if (this.link == null) return this.str?.length
         return this.link.reduce((pre, cur) => {
             return pre + cur.end - cur.start
         }, 0)

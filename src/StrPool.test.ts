@@ -38,6 +38,8 @@ console.log("s33",s33.toString())
 console.log("s33.slice(3, 20).toString()",s33.slice(3, 20).toString())
 console.log(s33.slice(11, 13).toString())
 console.log("(18, 20)", s33.slice(18, 20).toString())
-// bigpool.del()
-// bigpool = undefined!;
+bigpool.del()
+bigpool = undefined!;
+console.log("s33",s33.toString())
+console.log("(18, 20)", s33.slice(18, 20).toString())
 process.stdin.read();
