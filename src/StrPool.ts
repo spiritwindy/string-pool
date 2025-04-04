@@ -39,7 +39,11 @@ export class StrPool {
             return s
         } else {
             let link = StrPool.calu(this, start, end)
-            return new StrPool({ link, type: 3 })  
+            let p = new StrPool({ link, type: 3 })
+            link.forEach((ref) => {
+                ref.pool.ref.push(p)
+            })
+            return p;
         }
     }
     toString() {
@@ -78,11 +82,12 @@ export class StrPool {
                 if (arr[0] < arr[1]) {
                     refs.push(new Ref(ref.pool, arr[0], arr[1]))
                     end -= start + arr[1] - arr[0]
-                } else {
-                    end -=start
+                    start = 0
+                } else { 
+                    start -= ref.end - ref.start
+                    end -= ref.end - ref.start
                 }
                 if (end <= 0) break
-                start = 0
             }
             return refs
         }

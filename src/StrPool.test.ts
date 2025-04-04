@@ -17,21 +17,27 @@ console.log(d.toString())
 let d1 = StrPool.join(s, s2, s3)
 console.log(d1)
 console.log(d1.toString())
-let s0 = "123456789abcdef".repeat(0.5e7);
-let bigpool = new StrPool({ str: s0 })
+
+let bigpool = new StrPool({ str: "123456789abcdef".repeat(0.5e7) })
 let s12 = bigpool.slice(10000, 10009);
 let s23 = bigpool.slice(10010, 10014);
+let s24 = bigpool.slice(10030, 10040);
 console.log(s12.toString())
 console.log(s23.toString())
 
-let s33 = StrPool.join(s12, s23);
+let s33 = StrPool.join(s12, s23, s24);
+
 // bigpool.del()
 // process.stdin.read();
 // console.log(process.memoryUsage());
 console.log(s33.toString())
 // bigpool.del();
-bigpool = undefined!;
+
 // console.log(process.memoryUsage());
 console.log("s33",s33.toString())
-console.log("s33.slice(3, 11).toString()",s33.slice(3, 11).toString())
-console.log (s33.slice(11,13).toString())
+console.log("s33.slice(3, 20).toString()",s33.slice(3, 20).toString())
+console.log(s33.slice(11, 13).toString())
+console.log("(18, 20)", s33.slice(18, 20).toString())
+// bigpool.del()
+// bigpool = undefined!;
+process.stdin.read();
